@@ -38,22 +38,29 @@ namespace SFF.Domain.Models {
             var studioThatBorrows = _context.Studios.SingleOrDefault(s => s.ID == studioID);
 
             if (movieToBorrow == null) 
-                throw new InvalidOperationException();
+                throw new NullReferenceException();
 
-            studioThatBorrows.BorrowedMovies.Add(movieToBorrow);
             movieToBorrow.Borrowed = true;
+            movieToBorrow.Borrower = studioThatBorrows;
 
             return await _context.SaveChangesAsync();
         }
 
         public async Task<int> ReturnMovie(string movieTitle, int studioID) {
             var studio = _context.Studios.SingleOrDefault(s => s.ID == studioID);
-            var movieToReturn = studio.BorrowedMovies.Find(m => m.Title == movieTitle);
+            var movieToReturn = (
+                from m in _context.Movies
+                where m.Title == movieTitle
+                && m.Borrowed == true 
+                && m.Borrower.ID == studioID
+                select m
+            ).FirstOrDefault();
+
             if (movieToReturn == null) 
-                throw new InvalidOperationException();
+                throw new NullReferenceException();
 
             movieToReturn.Borrowed = false;
-            studio.BorrowedMovies.Remove(movieToReturn);
+            movieToReturn.Borrower = null;
 
             return await _context.SaveChangesAsync();
         }

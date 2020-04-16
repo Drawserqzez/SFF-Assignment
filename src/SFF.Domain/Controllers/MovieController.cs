@@ -33,14 +33,10 @@ namespace SFF.Domain.Controllers
         }
 
         [HttpDelete("delete")] 
-        public async Task<ActionResult> DeleteMovie(Movie movie) {
+        public async Task<ActionResult<Movie>> DeleteMovie(Movie movie) {
             await _repository.RemoveMovie(movie);
 
-            var deleted = await GetMovie(movie.ID);
-            if (deleted == null)
-                return Ok();
-            else 
-                throw new OperationCanceledException();
+            return await GetMovie(movie.ID);
         }
 
         [HttpPut("borrow")] 

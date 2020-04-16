@@ -5,6 +5,5 @@ namespace SFF.Domain.Models {
         public int ID { get; set; }
         public string Name { get; set; }
         public string Location { get; set; }
-        public List<Movie> BorrowedMovies { get; set; }
     }
 }

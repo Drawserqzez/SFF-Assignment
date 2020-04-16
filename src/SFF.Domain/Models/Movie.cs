@@ -5,5 +5,7 @@ namespace SFF.Domain.Models {
         public int ID { get; set; }
         public string Title { get; set; }
         public bool Borrowed { get; set; } = false;
+        public Studio Borrower { get; set; }
+
     }
 }

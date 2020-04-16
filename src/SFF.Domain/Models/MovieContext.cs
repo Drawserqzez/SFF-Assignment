@@ -15,7 +15,8 @@ namespace SFF.Domain.Models {
         // }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-            optionsBuilder.UseSqlite("Data Source=Movies.db");
+            optionsBuilder.UseSqlite("Data Source=SFF.db");
+            // optionsBuilder.UseInMemoryDatabase("movies");
         }
     }
 }

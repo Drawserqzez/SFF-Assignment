@@ -27,15 +27,13 @@ namespace SFF.Domain.Controllers {
         }
 
         [HttpDelete("delete")] 
-        public async Task<ActionResult> DeleteStudio(Studio studio) {
+        public async Task<ActionResult<Studio>> DeleteStudio(Studio studio) {
             await _repository.RemoveStudio(studio);
 
-            var deleted = await GetStudio(studio.ID);
-            
-            if (deleted == null)
+            if(await _repository.GetStudio(studio.ID) == null) 
                 return Ok();
             else 
-                throw new OperationCanceledException();
+                return await DeleteStudio(studio);
         }
 
         [HttpGet("borrowed")] 
@@ -44,14 +42,10 @@ namespace SFF.Domain.Controllers {
         }
 
         [HttpPut("edit")]
-        public async Task<ActionResult> EditStudio(Studio studio) {
+        public async Task<ActionResult<Studio>> EditStudio(Studio studio) {
             await _repository.EditStudio(studio);
 
-            var changedStudio = await _repository.GetStudio(studio.ID); 
-            if (changedStudio.Location == studio.Location && changedStudio.Name == studio.Name) 
-                return Ok();
-            else 
-                throw new ArgumentException();
+            return await _repository.GetStudio(studio.ID);
         }
     }
 }

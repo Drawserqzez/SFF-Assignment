@@ -9,8 +9,8 @@ using SFF.Domain.Models;
 namespace SFF.Domain.Migrations
 {
     [DbContext(typeof(MovieContext))]
-    [Migration("20200416150607_AddedStudios")]
-    partial class AddedStudios
+    [Migration("20200416162105_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,7 +27,7 @@ namespace SFF.Domain.Migrations
                     b.Property<bool>("Borrowed")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("StudioID")
+                    b.Property<int?>("BorrowerID")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Title")
@@ -35,7 +35,7 @@ namespace SFF.Domain.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("StudioID");
+                    b.HasIndex("BorrowerID");
 
                     b.ToTable("Movies");
                 });
@@ -59,9 +59,9 @@ namespace SFF.Domain.Migrations
 
             modelBuilder.Entity("SFF.Domain.Models.Movie", b =>
                 {
-                    b.HasOne("SFF.Domain.Models.Studio", null)
-                        .WithMany("BorrowedMovies")
-                        .HasForeignKey("StudioID");
+                    b.HasOne("SFF.Domain.Models.Studio", "Borrower")
+                        .WithMany()
+                        .HasForeignKey("BorrowerID");
                 });
 #pragma warning restore 612, 618
         }

@@ -31,15 +31,20 @@ namespace SFF.Domain.Models {
         public async Task<int> EditStudio(Studio studio) {
             var studioToChange = _context.Studios.FirstOrDefault(s => s.ID == studio.ID);
 
-            studioToChange.Name = studio.Name;
-            studioToChange.Location = studio.Location;
+            studioToChange.Name = (studio.Name != null) ? studio.Name : studioToChange.Name;
+            studioToChange.Location = (studio.Location != null) ? studio.Location : studioToChange.Location;
             return await _context.SaveChangesAsync();
         }
 
         public async Task<List<Movie>> GetBorrowedMovies(int studioID) {
-            Studio studio = await GetStudio(studioID);
+            var movies = await (
+                from m in _context.Movies 
+                where m.Borrowed == true &&
+                m.Borrower.ID == studioID
+                select m).ToListAsync();
+                        
 
-            return studio.BorrowedMovies;
+            return movies;
         }
     }
 }
