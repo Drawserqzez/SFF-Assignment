@@ -22,7 +22,8 @@ namespace SFF.Domain
         {
             services.AddControllers();
 
-            services.AddDbContext<MovieContext>(options => options.UseSqlite("Data source=movies.db"));
+            services.AddRepository<MovieRepository>(new MovieRepository());
+            services.AddRepository<StudioRepository>(new StudioRepository());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +44,13 @@ namespace SFF.Domain
             {
                 endpoints.MapControllers();
             });
+        }
+    }
+
+    public static class RepositoryInstallerExtension {
+        public static void AddRepository<TRepository>(
+            this IServiceCollection services, TRepository t) where TRepository : class {
+            services.AddSingleton<TRepository>(_ => t);
         }
     }
 }

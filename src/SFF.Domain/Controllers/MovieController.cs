@@ -1,47 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SFF.Domain.Models;
 
 namespace SFF.Domain.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/Movies")]
     public class MovieController : ControllerBase {
-        private IMovieRepository _repository; 
-        public MovieController(IMovieRepository repository) {
+        private MovieRepository _repository; 
+        public MovieController(MovieRepository repository) {
             _repository = repository;
         }
 
         [HttpGet] 
-        public Movie GetMovie(int id) {
-            return _repository.GetMovie(id);
+        public async Task<ActionResult<Movie>> GetMovie(int id) {
+            return await _repository.GetMovie(id);
         }
 
-        [HttpGet]
-        public Movie GetMovie(string title) {
-            return _repository.GetMovie(title);
-        }
-
-        [HttpGet]
-        public IEnumerable<Movie> GetMovies(string title) {
-            return _repository.GetMovies(title);
+        [HttpGet("title")]
+        public async Task<ActionResult<Movie>> GetMovie(string title) {
+            return await _repository.GetMovie(title);
         }
 
         [HttpPost]
-        public void PostMovie(string title, int amount) {
-            _repository.AddMovie(title, amount);
-        }
+        public async Task<ActionResult> PostMovie(Movie movie) {
+            await _repository.AddMovie(movie.Title);
 
-        [HttpPut]
-        public void AdjustAmountOfMovies(string title, int changeInNumbers) {
-            if (changeInNumbers == 0) 
-                return; 
-            else if (changeInNumbers > 0) 
-                _repository.AddMovie(title, changeInNumbers);
-            else if (changeInNumbers < 0)
-                _repository.RemoveMovies(title, changeInNumbers);
+            return CreatedAtAction(nameof(GetMovie), new { Title = movie.Title}, movie);
         }
     }
 }
