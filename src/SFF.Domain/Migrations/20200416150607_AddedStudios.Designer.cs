@@ -9,7 +9,7 @@ using SFF.Domain.Models;
 namespace SFF.Domain.Migrations
 {
     [DbContext(typeof(MovieContext))]
-    [Migration("20200416121037_AddedStudios")]
+    [Migration("20200416150607_AddedStudios")]
     partial class AddedStudios
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

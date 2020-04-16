@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,12 @@ namespace SFF.Domain.Models {
             studioToChange.Name = studio.Name;
             studioToChange.Location = studio.Location;
             return await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Movie>> GetBorrowedMovies(int studioID) {
+            Studio studio = await GetStudio(studioID);
+
+            return studio.BorrowedMovies;
         }
     }
 }

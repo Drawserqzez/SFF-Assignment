@@ -31,5 +31,30 @@ namespace SFF.Domain.Controllers
 
             return CreatedAtAction(nameof(GetMovie), new { Title = movie.Title}, movie);
         }
+
+        [HttpDelete("delete")] 
+        public async Task<ActionResult> DeleteMovie(Movie movie) {
+            await _repository.RemoveMovie(movie);
+
+            var deleted = await GetMovie(movie.ID);
+            if (deleted == null)
+                return Ok();
+            else 
+                throw new OperationCanceledException();
+        }
+
+        [HttpPut("borrow")] 
+        public async Task<ActionResult> BorrowMovie(string title, int studioID) {
+            await _repository.BorrowMovie(title, studioID);
+
+            return Ok();
+        }
+
+        [HttpPut("return")] 
+        public async Task<ActionResult> ReturnMovie(string title, int studioID) {
+            await _repository.ReturnMovie(title, studioID);
+
+            return Ok();
+        }
     }
 }
