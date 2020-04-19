@@ -5,6 +5,7 @@ namespace SFF.Domain.Models {
     public class MovieContext : DbContext {
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Studio> Studios { get; set; }
+        public DbSet<Trivia> Trivias { get; set; }
 
         public MovieContext() {
             this.Database.MigrateAsync();

@@ -21,6 +21,20 @@ namespace SFF.Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Trivias",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Content = table.Column<string>(nullable: true),
+                    MovieTitle = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Trivias", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Movies",
                 columns: table => new
                 {
@@ -51,6 +65,9 @@ namespace SFF.Domain.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Movies");
+
+            migrationBuilder.DropTable(
+                name: "Trivias");
 
             migrationBuilder.DropTable(
                 name: "Studios");

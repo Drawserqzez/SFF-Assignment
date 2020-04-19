@@ -55,6 +55,23 @@ namespace SFF.Domain.Migrations
                     b.ToTable("Studios");
                 });
 
+            modelBuilder.Entity("SFF.Domain.Models.Trivia", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("MovieTitle")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Trivias");
+                });
+
             modelBuilder.Entity("SFF.Domain.Models.Movie", b =>
                 {
                     b.HasOne("SFF.Domain.Models.Studio", "Borrower")

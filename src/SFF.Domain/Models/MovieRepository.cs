@@ -17,6 +17,25 @@ namespace SFF.Domain.Models {
             return await _context.SaveChangesAsync();
         }
 
+        public async Task<int> AddTrivia(Trivia trivia, string movieTitle) {
+            var movieFromDB = (
+                from m in _context.Movies 
+                where m.Title == movieTitle
+                && !m.Borrowed
+                select m
+            ).FirstOrDefault();
+
+            if (movieFromDB == null) {
+                await AddMovie(movieTitle);
+                return await AddTrivia(trivia, movieTitle);
+            }
+            else {
+                trivia.MovieTitle = movieFromDB.Title;
+                _context.Trivias.Add(trivia);
+                return await _context.SaveChangesAsync();
+            }
+        }
+
         public async Task<Movie> GetMovie(int movieID) {
             return await _context.Movies.SingleOrDefaultAsync(x => x.ID == movieID);
         }

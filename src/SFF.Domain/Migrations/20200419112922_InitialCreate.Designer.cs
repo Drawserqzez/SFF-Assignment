@@ -9,7 +9,7 @@ using SFF.Domain.Models;
 namespace SFF.Domain.Migrations
 {
     [DbContext(typeof(MovieContext))]
-    [Migration("20200416162105_InitialCreate")]
+    [Migration("20200419112922_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -55,6 +55,23 @@ namespace SFF.Domain.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Studios");
+                });
+
+            modelBuilder.Entity("SFF.Domain.Models.Trivia", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("MovieTitle")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Trivias");
                 });
 
             modelBuilder.Entity("SFF.Domain.Models.Movie", b =>

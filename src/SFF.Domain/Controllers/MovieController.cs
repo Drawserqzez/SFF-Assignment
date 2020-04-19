@@ -29,8 +29,15 @@ namespace SFF.Domain.Controllers
         public async Task<ActionResult> PostMovie(Movie movie) {
             await _repository.AddMovie(movie.Title);
 
-            return CreatedAtAction(nameof(GetMovie), new { Title = movie.Title}, movie);
+            return CreatedAtAction(nameof(GetMovie), new { Title = movie.Title }, movie);
         }
+
+        [HttpPost]
+        public async Task<ActionResult> PostTrivia(Trivia trivia, Movie movie) {
+            await _repository.AddTrivia(trivia, movie.Title);
+
+            return CreatedAtAction(nameof(GetMovie), new { ID = movie.ID }, movie);
+        } 
 
         [HttpDelete("delete")] 
         public async Task<ActionResult<Movie>> DeleteMovie(Movie movie) {
