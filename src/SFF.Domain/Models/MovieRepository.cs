@@ -17,23 +17,59 @@ namespace SFF.Domain.Models {
             return await _context.SaveChangesAsync();
         }
 
-        public async Task<int> AddTrivia(Trivia trivia, string movieTitle) {
+        public async Task<int> AddTrivia(Trivia trivia) {
             var movieFromDB = (
                 from m in _context.Movies 
-                where m.Title == movieTitle
-                && !m.Borrowed
+                where m.Title == trivia.MovieTitle
                 select m
             ).FirstOrDefault();
 
+            var triviasFromDB = (
+                from t in _context.Trivias
+                where t.Content == trivia.Content 
+                && t.MovieTitle == trivia.MovieTitle
+                select t
+            ).FirstOrDefault();
+
+            if (triviasFromDB != null)
+                return 0;
+            
             if (movieFromDB == null) {
-                await AddMovie(movieTitle);
-                return await AddTrivia(trivia, movieTitle);
+                await AddMovie(trivia.MovieTitle);
+                return await AddTrivia(trivia);
             }
             else {
-                trivia.MovieTitle = movieFromDB.Title;
                 _context.Trivias.Add(trivia);
                 return await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<int> RemoveTrivia(Trivia trivia) {
+            _context.Trivias.Remove(
+                _context.Trivias.SingleOrDefault(t => t.ID == trivia.ID)
+            );
+
+            return await _context.SaveChangesAsync();
+        }
+
+        public async Task<Trivia[]> GetTrivias(string movieTitle) {
+            Trivia[] trivias = await (
+                from t in _context.Trivias 
+                where t.MovieTitle == movieTitle
+                select t
+            ).ToArrayAsync();
+
+            if (trivias.Count() == 0) 
+                return new Trivia[]{new Trivia{ Content = "No trivias found for the specified movie.", MovieTitle = movieTitle }};
+            else 
+                return trivias;
+        }
+
+        public async Task<Movie[]> GetAllMovies() {
+            return await (
+                from m in _context.Movies 
+                select m
+            ).ToArrayAsync();
         }
 
         public async Task<Movie> GetMovie(int movieID) {
@@ -41,7 +77,7 @@ namespace SFF.Domain.Models {
         }
         
         public async Task<Movie> GetMovie(string movieTitle) {
-            return await _context.Movies.SingleOrDefaultAsync(x => x.Title == movieTitle);
+            return await _context.Movies.FirstOrDefaultAsync(x => x.Title == movieTitle);
         }
 
         public async Task<int> RemoveMovie(Movie movie) {

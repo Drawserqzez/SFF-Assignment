@@ -16,6 +16,11 @@ namespace SFF.Domain.Controllers
         }
 
         [HttpGet] 
+        public async Task<ActionResult<Movie[]>> GetMovies() {
+            return await _repository.GetAllMovies();
+        }
+
+        [HttpGet("/{id}")] 
         public async Task<ActionResult<Movie>> GetMovie(int id) {
             return await _repository.GetMovie(id);
         }
@@ -32,14 +37,28 @@ namespace SFF.Domain.Controllers
             return CreatedAtAction(nameof(GetMovie), new { Title = movie.Title }, movie);
         }
 
-        [HttpPost]
-        public async Task<ActionResult> PostTrivia(Trivia trivia, Movie movie) {
-            await _repository.AddTrivia(trivia, movie.Title);
+        [HttpPost("add-trivia")]
+        public async Task<ActionResult> PostTrivia(Trivia trivia) {
+            await _repository.AddTrivia(trivia);
 
-            return CreatedAtAction(nameof(GetMovie), new { ID = movie.ID }, movie);
+            return CreatedAtAction(nameof(GetMovie), new { Title = trivia.MovieTitle });
         } 
 
-        [HttpDelete("delete")] 
+        [HttpGet("trivias")]
+        public async Task<ActionResult<Trivia[]>> GetTrivias(string movieTitle) {
+            Trivia[] result = await _repository.GetTrivias(movieTitle);
+            
+            return result;
+        }
+
+        [HttpDelete("delete/trivia")]
+        public async Task<ActionResult<Trivia[]>> DeleteTrivia(Trivia trivia) {
+            await _repository.RemoveTrivia(trivia);
+
+            return await GetTrivias(trivia.MovieTitle);
+        }
+
+        [HttpDelete("delete/movie")] 
         public async Task<ActionResult<Movie>> DeleteMovie(Movie movie) {
             await _repository.RemoveMovie(movie);
 
