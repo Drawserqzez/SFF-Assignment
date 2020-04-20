@@ -76,8 +76,8 @@ namespace SFF.Domain.Models {
             return await _context.Movies.SingleOrDefaultAsync(x => x.ID == movieID);
         }
         
-        public async Task<Movie> GetMovie(string movieTitle) {
-            return await _context.Movies.FirstOrDefaultAsync(x => x.Title == movieTitle);
+        public async Task<Movie[]> GetMovies(string movieTitle) {
+            return await _context.Movies.Where(x => x.Title == movieTitle).ToArrayAsync();
         }
 
         public async Task<int> RemoveMovie(Movie movie) {
@@ -116,6 +116,43 @@ namespace SFF.Domain.Models {
 
             movieToReturn.Borrowed = false;
             movieToReturn.Borrower = null;
+
+            return await _context.SaveChangesAsync();
+        }
+
+        public async Task<Grade[]> GetGrades(Movie movie) {
+            var grades = await (
+                from g in _context.Grades 
+                where g.Movie.Title == movie.Title
+                select g
+            ).ToArrayAsync();
+
+            return grades;
+        }
+
+        public async Task<int> AddGrade(Grade grade) {
+            if ((int)grade.Rating > 5)
+                grade.Rating = StarAmount.Five;
+            else if ((int)grade.Rating < 1) 
+                grade.Rating = StarAmount.One;
+            
+            var previousGrade = (
+                from g in _context.Grades 
+                where g.Movie.ID == grade.Movie.ID
+                && g.Studio.ID == grade.Studio.ID
+                select g
+            ).FirstOrDefault();
+
+            var studio = _context.Studios.FirstOrDefault(s => s.ID == grade.Studio.ID);
+            var movie = _context.Movies.FirstOrDefault(m => m.ID == grade.Movie.ID);
+            grade.Movie = (movie != null) ? movie : grade.Movie;
+            grade.Studio = (studio != null) ? studio : grade.Studio;
+
+            if (previousGrade != null)
+                previousGrade.Rating = grade.Rating;
+            else
+                _context.Grades.Add(grade);
+            
 
             return await _context.SaveChangesAsync();
         }

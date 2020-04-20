@@ -55,6 +55,43 @@ namespace SFF.Domain.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Grades",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    MovieID = table.Column<int>(nullable: true),
+                    StudioID = table.Column<int>(nullable: true),
+                    Rating = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Grades", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Grades_Movies_MovieID",
+                        column: x => x.MovieID,
+                        principalTable: "Movies",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Grades_Studios_StudioID",
+                        column: x => x.StudioID,
+                        principalTable: "Studios",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Grades_MovieID",
+                table: "Grades",
+                column: "MovieID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Grades_StudioID",
+                table: "Grades",
+                column: "StudioID");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Movies_BorrowerID",
                 table: "Movies",
@@ -64,10 +101,13 @@ namespace SFF.Domain.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Movies");
+                name: "Grades");
 
             migrationBuilder.DropTable(
                 name: "Trivias");
+
+            migrationBuilder.DropTable(
+                name: "Movies");
 
             migrationBuilder.DropTable(
                 name: "Studios");

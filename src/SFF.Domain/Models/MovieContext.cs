@@ -6,6 +6,7 @@ namespace SFF.Domain.Models {
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Studio> Studios { get; set; }
         public DbSet<Trivia> Trivias { get; set; }
+        public DbSet<Grade> Grades { get; set; }
 
         public MovieContext() {
             this.Database.MigrateAsync();
@@ -17,6 +18,7 @@ namespace SFF.Domain.Models {
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             optionsBuilder.UseSqlite("Data Source=SFF.db");
+            optionsBuilder.EnableSensitiveDataLogging();
             // optionsBuilder.UseInMemoryDatabase("movies");
         }
     }

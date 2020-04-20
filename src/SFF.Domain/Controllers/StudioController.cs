@@ -15,6 +15,11 @@ namespace SFF.Domain.Controllers {
         }
 
         [HttpGet]
+        public async Task<ActionResult<Studio[]>> GetStudios() {
+            return await _repository.GetAllStudios();
+        }
+
+        [HttpGet("id/{id}")]
         public async Task<ActionResult<Studio>> GetStudio(int id) {
             return await _repository.GetStudio(id);
         }

@@ -20,14 +20,14 @@ namespace SFF.Domain.Controllers
             return await _repository.GetAllMovies();
         }
 
-        [HttpGet("/{id}")] 
+        [HttpGet("id/{id}")] 
         public async Task<ActionResult<Movie>> GetMovie(int id) {
             return await _repository.GetMovie(id);
         }
 
         [HttpGet("title")]
-        public async Task<ActionResult<Movie>> GetMovie(string title) {
-            return await _repository.GetMovie(title);
+        public async Task<ActionResult<Movie[]>> GetMovie(string title) {
+            return await _repository.GetMovies(title);
         }
 
         [HttpPost]
@@ -77,6 +77,18 @@ namespace SFF.Domain.Controllers
             await _repository.ReturnMovie(title, studioID);
 
             return Ok();
+        }
+
+        [HttpPost("grade")] 
+        public async Task<ActionResult<Movie>> GradeMovie(Grade grade) {
+            await _repository.AddGrade(grade);
+
+            return CreatedAtAction(nameof(GetMovie), new { ID = grade.Movie.ID }, grade.Movie);
+        } 
+
+        [HttpGet("grades")]
+        public async Task<ActionResult<Grade[]>> GetGrades(Movie movie) {
+            return await _repository.GetGrades(movie);
         }
     }
 }

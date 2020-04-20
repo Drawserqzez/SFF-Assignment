@@ -16,6 +16,30 @@ namespace SFF.Domain.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.3");
 
+            modelBuilder.Entity("SFF.Domain.Models.Grade", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("MovieID")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("StudioID")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("MovieID");
+
+                    b.HasIndex("StudioID");
+
+                    b.ToTable("Grades");
+                });
+
             modelBuilder.Entity("SFF.Domain.Models.Movie", b =>
                 {
                     b.Property<int>("ID")
@@ -70,6 +94,17 @@ namespace SFF.Domain.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Trivias");
+                });
+
+            modelBuilder.Entity("SFF.Domain.Models.Grade", b =>
+                {
+                    b.HasOne("SFF.Domain.Models.Movie", "Movie")
+                        .WithMany()
+                        .HasForeignKey("MovieID");
+
+                    b.HasOne("SFF.Domain.Models.Studio", "Studio")
+                        .WithMany()
+                        .HasForeignKey("StudioID");
                 });
 
             modelBuilder.Entity("SFF.Domain.Models.Movie", b =>
