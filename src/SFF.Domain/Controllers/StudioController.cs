@@ -6,7 +6,7 @@ using SFF.Domain.Models;
 
 namespace SFF.Domain.Controllers {
     [ApiController]
-    [Route("api/Studios")]
+    [Route("api/v1/Studios")]
     public class StudioController : ControllerBase {
         private StudioRepository _repository;
 
@@ -15,8 +15,8 @@ namespace SFF.Domain.Controllers {
         }
 
         [HttpGet]
-        public async Task<ActionResult<Studio>> GetStudio(int id) {
-            return await _repository.GetStudio(id);
+        public async Task<ActionResult<Studio[]>> GetStudios() {
+            return await _repository.GetAllStudios();
         }
 
         [HttpPost]
@@ -26,6 +26,11 @@ namespace SFF.Domain.Controllers {
             return CreatedAtAction(nameof(GetStudio), new { Id = studio.ID}, studio);
         }
 
+        [HttpGet("id/{id}")]
+        public async Task<ActionResult<Studio>> GetStudio(int id) {
+            return await _repository.GetStudio(id);
+        }
+
         [HttpDelete("delete")] 
         public async Task<ActionResult<Studio>> DeleteStudio(Studio studio) {
             await _repository.RemoveStudio(studio);
@@ -33,12 +38,12 @@ namespace SFF.Domain.Controllers {
             if(await _repository.GetStudio(studio.ID) == null) 
                 return Ok();
             else 
-                return await DeleteStudio(studio);
+                return NotFound();
         }
 
-        [HttpGet("borrowed")] 
-        public async Task<ActionResult<List<Movie>>> GetBorrowedMovies(int studioID) {
-            return await _repository.GetBorrowedMovies(studioID);
+        [HttpGet("borrowed/{id}")] 
+        public async Task<ActionResult<List<Movie>>> GetBorrowedMovies(int id) {
+            return await _repository.GetBorrowedMovies(id);
         }
 
         [HttpPut("edit")]

@@ -17,12 +17,16 @@ namespace SFF.Domain.Models {
         }
 
         public async Task<Studio> GetStudio(int studioID) {
-            return await _context.Studios.SingleOrDefaultAsync(s => s.ID == studioID);
+            return await _context.Studios.FirstOrDefaultAsync(s => s.ID == studioID);
+        }
+
+        public async Task<Studio[]> GetAllStudios() {
+            return await _context.Studios.ToArrayAsync();
         }
 
         public async Task<int> RemoveStudio(Studio studio) {
             _context.Studios.Remove(
-                _context.Studios.SingleOrDefault(s => s == studio)
+                _context.Studios.FirstOrDefault(s => s.ID == studio.ID)
             );
 
             return await _context.SaveChangesAsync();
@@ -39,8 +43,8 @@ namespace SFF.Domain.Models {
         public async Task<List<Movie>> GetBorrowedMovies(int studioID) {
             var movies = await (
                 from m in _context.Movies 
-                where m.Borrowed == true &&
-                m.Borrower.ID == studioID
+                where m.Borrowed
+                && m.Borrower.ID == studioID
                 select m).ToListAsync();
                         
 
