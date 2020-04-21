@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SFF.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Net.Http.Headers;
 
 namespace SFF.Domain
 {
@@ -24,6 +26,10 @@ namespace SFF.Domain
 
             services.AddRepository<MovieRepository>(new MovieRepository());
             services.AddRepository<StudioRepository>(new StudioRepository());
+
+            services.AddMvc(options => 
+                options.FormatterMappings.SetMediaTypeMappingForFormat("xml", MediaTypeHeaderValue.Parse("application/xml"))
+            ).AddXmlSerializerFormatters();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

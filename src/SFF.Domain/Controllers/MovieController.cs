@@ -8,16 +8,24 @@ using SFF.Domain.Models;
 namespace SFF.Domain.Controllers
 {
     [ApiController]
-    [Route("api/Movies")]
+    [Route("api/v1/Movies")]
     public class MovieController : ControllerBase {
         private MovieRepository _repository; 
         public MovieController(MovieRepository repository) {
             _repository = repository;
         }
 
+        #region Movies
         [HttpGet] 
         public async Task<ActionResult<Movie[]>> GetMovies() {
             return await _repository.GetAllMovies();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> PostMovie(Movie movie) {
+            await _repository.AddMovie(movie.Title);
+
+            return CreatedAtAction(nameof(GetMovie), new { Title = movie.Title }, movie);
         }
 
         [HttpGet("id/{id}")] 
@@ -30,13 +38,29 @@ namespace SFF.Domain.Controllers
             return await _repository.GetMovies(title);
         }
 
-        [HttpPost]
-        public async Task<ActionResult> PostMovie(Movie movie) {
-            await _repository.AddMovie(movie.Title);
+        [HttpDelete("delete/movie")] 
+        public async Task<ActionResult<Movie[]>> DeleteMovie(Movie movie) {
+            await _repository.RemoveMovie(movie);
 
-            return CreatedAtAction(nameof(GetMovie), new { Title = movie.Title }, movie);
+            return await GetMovies();
         }
 
+        [HttpPut("borrow")] 
+        public async Task<ActionResult> BorrowMovie(string title, int studioID) {
+            await _repository.BorrowMovie(title, studioID);
+
+            return Ok();
+        }
+
+        [HttpPut("return")] 
+        public async Task<ActionResult> ReturnMovie(string title, int studioID) {
+            await _repository.ReturnMovie(title, studioID);
+
+            return Ok();
+        }
+        #endregion Movies
+        
+        #region Trivia
         [HttpPost("add-trivia")]
         public async Task<ActionResult> PostTrivia(Trivia trivia) {
             await _repository.AddTrivia(trivia);
@@ -57,29 +81,10 @@ namespace SFF.Domain.Controllers
 
             return await GetTrivias(trivia.MovieTitle);
         }
+        #endregion Trivia
 
-        [HttpDelete("delete/movie")] 
-        public async Task<ActionResult<Movie>> DeleteMovie(Movie movie) {
-            await _repository.RemoveMovie(movie);
-
-            return await GetMovie(movie.ID);
-        }
-
-        [HttpPut("borrow")] 
-        public async Task<ActionResult> BorrowMovie(string title, int studioID) {
-            await _repository.BorrowMovie(title, studioID);
-
-            return Ok();
-        }
-
-        [HttpPut("return")] 
-        public async Task<ActionResult> ReturnMovie(string title, int studioID) {
-            await _repository.ReturnMovie(title, studioID);
-
-            return Ok();
-        }
-
-        [HttpPost("grade")] 
+        #region Grades
+        [HttpPost("grades")] 
         public async Task<ActionResult<Movie>> GradeMovie(Grade grade) {
             await _repository.AddGrade(grade);
 
@@ -90,5 +95,14 @@ namespace SFF.Domain.Controllers
         public async Task<ActionResult<Grade[]>> GetGrades(Movie movie) {
             return await _repository.GetGrades(movie);
         }
+        #endregion Grades
+
+        #region Label
+        [HttpGet("label/{id}.{format?}")]
+        [FormatFilter]
+        public async Task<ActionResult<MovieLabel>> GetLabel(int id, string deliveryLocation) {
+            return await _repository.GetLabelForMovie(id, deliveryLocation);
+        }
+        #endregion Label
     }
 }

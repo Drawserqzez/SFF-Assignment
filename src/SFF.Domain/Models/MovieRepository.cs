@@ -156,5 +156,16 @@ namespace SFF.Domain.Models {
 
             return await _context.SaveChangesAsync();
         }
+
+        public async Task<MovieLabel> GetLabelForMovie(int movieID, string deliveryLocation) {
+            var movie = await GetMovie(movieID);
+
+            MovieLabel label = new MovieLabel{ 
+                MovieTitle = movie.Title, 
+                DeliveryLocation = deliveryLocation, 
+                Date = DateTime.Now
+            };
+            return label;
+        }
     } 
 }
